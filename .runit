@@ -1,0 +1,275 @@
+# gemma: distil the Gemini Decisions API into a local Gemma, for data that
+# must not leave the machine. Fake scenarios → Gemini labels → students
+# (Gemma 3 1B + LoRA, EmbeddingGemma 1 and 2 + logistic regression) trained
+# on Modal → a local decider with the same API as Gemini's.
+
+RUNIT_NAME="gemma"
+RUNIT_ABOUT="starts the local Gemma decider (the best trained student) at http://127.0.0.1:8250"
+
+runit_help() {
+  cat <<'EOF'
+Usage: runit [command] [options]
+
+  runit                 the local decider at http://127.0.0.1:8250, serving
+                        the best trained student (adapters/current), or
+                        plain Gemma 3 1B if none is trained yet
+  runit demo            the demo page at http://127.0.0.1:8250/demo: starts
+                        the local decider if it does not run, then opens
+                        the page in the browser
+  runit all             every step that is not done yet: scenarios, labels,
+                        the benchmark (the students on Modal), then the
+                        local decider
+  runit scenarios [N]   write N more fake scenarios with Gemini (default 900
+                        tuples; about 85% pass the realism filter)
+  runit review [N]      print N random scenarios to read by hand (default 8)
+  runit label           Gemini Decisions labels for scenarios without one
+  runit train [lora|embed|embed2] [--local]
+                        teach one student (default lora) on a Modal GPU, or
+                        on this Mac with --local
+  runit bench [--local] teach the students at the same time on Modal (Gemma
+                        + LoRA, EmbeddingGemma 1 and 2 tuned, EmbeddingGemma
+                        frozen) and compare them with plain Gemma and the
+                        prior on the test set; writes data/reports/bench-*.md
+  runit table FOLDER…   saved students (folder names in adapters/) in one
+                        table; also points adapters/current at the best one
+  runit decide "TEXT" [--teacher]
+                        the local student's answers to the 4 questions;
+                        --teacher also asks Gemini, to compare
+  runit status          scenarios, labels and the current students
+  runit serve           the same as plain runit
+
+Reranker (put the inbox messages that match a staff search first):
+  runit rerank data     Gemini writes 200 fake searches and grades every
+                        message against every search (about $1)
+  runit rerank bench    teach the rerankers on Modal (Gemma + LoRA
+                        cross-encoder, EmbeddingGemma 1 and 2 bi-encoders)
+                        and compare them; writes data/reports/rerank-*.md
+  runit rerank search "QUERY"
+                        the current reranker's top test messages for QUERY
+  runit rerank queries | label
+                        the two halves of rerank data, one at a time
+  runit rerank table STAMP
+                        the table again, from the saved rerankers of one run
+
+Transcriber (EmbeddingGemma 2 hears, the eg2 way):
+  runit voice data      Gemini writes spoken scripts of the voicemail
+                        scenarios, speaks them (TTS) and transcribes the
+                        test clips (the bar)
+  runit voice train     teach the reader on a Modal H100 (LibriSpeech
+                        + the fake voicemails), with a tuned word LM;
+                        writes data/reports/transcriber-*.md
+  runit voice lm [FOLDER]
+                        add a tuned word LM to a saved transcriber
+                        (default: the current one); reads the LibriSpeech
+                        transcripts on Modal the first time
+  runit voice bar       only the Gemini bar (transcribes the test clips)
+  runit voice smoke     a small test run of voice train on Modal
+  runit voice table     every saved transcriber run in one table
+  runit voice transcribe FILE [--phone]
+                        transcribe an audio file on this Mac (--phone adds
+                        the phone-line effect first)
+
+Options:
+  --epochs N            LoRA epochs of the Gemma student (default 3; the
+                        best epoch on val is kept)
+  --rank N              LoRA rank (default 16)
+  --targets all|qv      LoRA on every linear layer (default all) or on the
+                        q and v projections only
+  --tune-epochs N       epochs to tune EmbeddingGemma itself with LoRA
+                        (default 6; 0 = frozen, only the regressions learn)
+  --embed-lr X          LoRA learning rate of the embed students (2e-4)
+  --cross-pairs N       rerank: training pairs per query, cross (24)
+  --bi-pairs N          rerank: training pairs per query, bi (48)
+  --epochs N (voice)    reader epochs (default 6)
+  --libri SPLITS        voice: LibriSpeech splits, comma-separated
+                        (default train.100; also train.360, other/train.500)
+  --layers N, --width N voice: reader layers (4) and width (512)
+  --mix                 voice: the reader mixes all 13 ear states
+  --time-mask X         voice: share of slices hidden in training (0)
+
+Environment:
+  PORT=8250             the local decider's port
+  GEMINI_API_KEY        from .env (the teacher; only fake data goes to it)
+  GEMINI_WRITER         model that writes scenarios (default gemini-3.5-flash)
+  GEMINI_DECIDER        the teacher (default gemini-decision-1)
+  GEMMA_MODEL           the lora student's base (default unsloth/gemma-3-1b-it)
+  EMBED_MODEL           the embed student's base (default unsloth/embeddinggemma-300m)
+  LAB_MODAL_GPU         Modal GPUs for training, first free one (default L4,A10G,L40S)
+  LAB_STUDENT           serve this adapters/ folder instead of adapters/current
+  LAB_RERANKER          the reranker for /v1/rerank (default adapters/rerank-current)
+  LAB_TRANSCRIBER       the transcriber for /v1/transcribe (default
+                        adapters/transcriber-current)
+  LAB_EAR_GPU           Modal GPU for the transcriber (default H100)
+
+Examples:
+  runit all
+  runit demo
+  runit bench
+  runit decide "my chest feels tight since this morning" --teacher
+  runit rerank search "refill requests for blood pressure pills"
+  runit voice train --libri train.100,train.360,other/train.500 --epochs 3 --layers 6 --mix --time-mask 0.1
+  runit voice transcribe data/voice/audio/s00003.wav --phone
+  curl -s localhost:8250/v1/decisions -H 'content-type: application/json' -d '{"input":"…","questions":{"urgent":{"type":"noul","instructions":"Is this urgent?"}}}'
+  curl -s localhost:8250/v1/rerank -H 'content-type: application/json' -d '{"query":"insulin","documents":["…","…"]}'
+  curl -s localhost:8250/v1/transcribe --data-binary @voicemail.wav
+EOF
+}
+
+runit_step() { printf '→ %s\n' "$1"; }
+runit_ok() { printf '✓ %s\n' "$1"; }
+runit_fail() { printf '✗ %s\n  fix: %s\n' "$1" "$2"; }
+
+# Only the steps that call Gemini need the key; serving and training do not.
+runit_key() {
+  [ -n "${GEMINI_API_KEY:-}" ] && return 0
+  if [ ! -f .env ] || ! grep -q '^GEMINI_API_KEY=.' .env; then
+    runit_fail "no GEMINI_API_KEY in the environment or .env" "cp .env.example .env and put the key in it"; return 1
+  fi
+}
+
+runit_env() {
+  if [ ! -x .venv/bin/python ] || [ pyproject.toml -nt .venv ]; then
+    runit_step "Python env (.venv)"
+    uv sync --quiet --python 3.12 || { runit_fail "uv sync failed" "uv sync"; return 1; }
+    touch .venv
+    runit_ok "Python env"
+  fi
+}
+
+lab() { .venv/bin/python -m lab "$@"; }
+
+runit_modal() {
+  if ! .venv/bin/modal profile current >/dev/null 2>&1; then
+    runit_fail "Modal is not logged in" ".venv/bin/modal setup"; return 1
+  fi
+}
+
+runit_serve() {
+  local port="${PORT:-8250}" health pid
+  # A decider of this folder that is still loading the model does not answer
+  # yet: the pid file finds it.
+  pid=$(cat tmp/serve.pid 2>/dev/null || true)
+  if [ -n "$pid" ] && ps -p "$pid" -o command= 2>/dev/null | grep -q "uvicorn lab.serve:app"; then
+    if ! curl -fsS "127.0.0.1:$port/health" >/dev/null 2>&1; then
+      runit_ok "decider already starting (pid $pid, see log or its terminal); kill $pid stops it"
+      return 0
+    fi
+  fi
+  if health=$(curl -fsS "127.0.0.1:$port/health" 2>/dev/null); then
+    if printf '%s' "$health" | grep -q "\"root\":\"$(pwd -P)\""; then
+      runit_ok "decider already running at http://127.0.0.1:$port ($(printf '%s' "$health" | sed 's/.*"student":"\([^"]*\)".*/\1/'))"
+      return 0
+    fi
+    runit_fail "port $port is held by another project" "PORT=8251 runit"; return 1
+  elif lsof -ti "tcp:$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    runit_fail "port $port is taken by something that is not this decider" "PORT=8251 runit"; return 1
+  fi
+  local student="plain Gemma 3 1B (no student trained yet: runit all)"
+  [ -n "${LAB_STUDENT:-}" ] && student="$LAB_STUDENT"
+  [ -z "${LAB_STUDENT:-}" ] && [ -f adapters/current ] && student="adapters/$(cat adapters/current)"
+  runit_step "local decider: loading $student (the first run downloads the base model)"
+  cat <<EOF
+  When it says "Application startup complete":
+    http://127.0.0.1:$port/health
+    curl -s 127.0.0.1:$port/v1/decisions -H 'content-type: application/json' -d '{"input":"…","questions":{"q":{"type":"noul","instructions":"…"}}}'
+    runit decide "…" --teacher     (in another terminal)
+  It listens on 127.0.0.1 only and keeps nothing it reads. Ctrl-C stops it.
+EOF
+  mkdir -p tmp
+  echo $$ > tmp/serve.pid  # exec keeps this pid
+  exec .venv/bin/uvicorn lab.serve:app --host 127.0.0.1 --port "$port"
+}
+
+runit_demo() {
+  local port="${PORT:-8250}" url pid i
+  url="http://127.0.0.1:$port/demo"
+  if curl -fsS "127.0.0.1:$port/health" 2>/dev/null | grep -q "\"root\":\"$(pwd -P)\""; then
+    runit_ok "decider already running at http://127.0.0.1:$port"
+  else
+    runit_step "local decider: starting in the background (log: log/serve.log)"
+    mkdir -p log tmp
+    PORT="$port" nohup "$HOME/.local/bin/runit" serve >log/serve.log 2>&1 &
+    for i in $(seq 1 180); do
+      curl -fsS "127.0.0.1:$port/health" >/dev/null 2>&1 && break
+      # The background runit ends at once when a decider of this folder is
+      # already starting; then wait for that one.
+      pid=$(cat tmp/serve.pid 2>/dev/null || true)
+      if ! kill -0 $! 2>/dev/null && ! { [ -n "$pid" ] && ps -p "$pid" -o command= 2>/dev/null | grep -q "uvicorn lab.serve:app"; }; then
+        runit_fail "the decider stopped" "tail log/serve.log"; return 1
+      fi
+      sleep 1
+    done
+    curl -fsS "127.0.0.1:$port/health" >/dev/null 2>&1 || { runit_fail "the decider did not answer in 3 minutes" "tail log/serve.log"; return 1; }
+    runit_ok "decider running at http://127.0.0.1:$port"
+  fi
+  curl -fsS "$url" -o /dev/null || { runit_fail "the demo page did not load" "tail log/serve.log"; return 1; }
+  runit_ok "demo page at $url"
+  command -v open >/dev/null && open "$url"
+  pid=$(cat tmp/serve.pid 2>/dev/null || true)
+  echo "  The page calls the local server only. Stop the server with: kill ${pid:-<pid in tmp/serve.pid>}"
+}
+
+runit_all() {
+  runit_key || return 1
+  if [ -s data/scenarios.jsonl ]; then
+    runit_ok "scenarios: $(grep -c . data/scenarios.jsonl) already written (runit scenarios N adds more)"
+  else
+    runit_step "scenarios: Gemini writes and filters 900 fake patient messages (a few minutes)"
+    lab scenarios --n 900 || { runit_fail "writing scenarios failed" "runit scenarios"; return 1; }
+    runit_ok "scenarios"
+  fi
+  runit_step "labels: gemini-decision-1 answers the 4 questions for each new scenario"
+  lab label || { runit_fail "labelling failed" "runit label"; return 1; }
+  runit_ok "labels"
+  local report
+  report=$(ls -t data/reports/bench-*.md 2>/dev/null | head -1 || true)
+  if [ -n "$report" ] && [ -f adapters/current ] && [ "$report" -nt data/labels.jsonl ]; then
+    runit_ok "benchmark: done on the current labels ($report); runit bench runs it again"
+  else
+    runit_modal || return 1
+    runit_step "benchmark: the students train on Modal GPUs at the same time (about 10 minutes)"
+    lab bench || { runit_fail "the benchmark failed" "runit bench"; return 1; }
+    runit_ok "benchmark"
+  fi
+  runit_serve
+}
+
+runit_main() {
+  # The help needs no Python env: print it before uv sync.
+  case "${1:-}" in -h|--help|help) runit_help; return 0 ;; esac
+  runit_env || return 1
+  local cmd="${1:-serve}"
+  [ $# -gt 0 ] && shift
+  case "$cmd" in
+    serve) runit_serve ;;
+    all) runit_all ;;
+    demo) runit_demo ;;
+    scenarios) runit_key && lab scenarios --n "${1:-900}" ;;
+    review) lab review --n "${1:-8}" ;;
+    label) runit_key && lab label ;;
+    train)
+      local kind=lora
+      case "${1:-}" in lora|embed|embed2) kind="$1"; shift ;; esac
+      case " $* " in *" --local "*) ;; *) runit_modal || return 1 ;; esac
+      lab train --student "$kind" "$@" ;;
+    bench)
+      case " $* " in *" --local "*) ;; *) runit_modal || return 1 ;; esac
+      lab bench "$@" ;;
+    decide)
+      case " $* " in *" --teacher "*) runit_key || return 1 ;; esac
+      lab decide "$@" ;;
+    status) lab status ;;
+    rerank)
+      case "${1:-}" in queries|label|data) runit_key || return 1 ;; bench) case " $* " in *" --local "*) ;; *) runit_modal || return 1 ;; esac ;; esac
+      lab rerank "$@" ;;
+    voice)
+      case "${1:-}" in
+        data|bar) runit_key || return 1 ;;
+        train|smoke) runit_key && runit_modal || return 1 ;;
+        lm) [ -f data/lm/librispeech-train-clean.txt ] || runit_modal || return 1 ;;
+      esac
+      lab voice "$@" ;;
+    table) lab table "$@" ;;
+    *) runit_fail "unknown command: $cmd" "runit --help"; return 1 ;;
+  esac
+}

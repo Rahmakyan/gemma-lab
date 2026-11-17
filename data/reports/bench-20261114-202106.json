@@ -1,0 +1,1165 @@
+[
+  {
+    "kind": "lora",
+    "model": "unsloth/gemma-3-1b-it",
+    "device": "cuda",
+    "config": {
+      "epochs": 3,
+      "rank": 16,
+      "targets": "all"
+    },
+    "split": {
+      "train": 579,
+      "val": 68,
+      "test": 137
+    },
+    "prior": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.4745,
+            "kl": 0.8404
+          },
+          "route": {
+            "agreement": 0.7226,
+            "kl": 0.6209
+          },
+          "callback_today": {
+            "agreement": 0.7007,
+            "kl": 0.3629,
+            "auc": 0.5,
+            "mae": 0.3501
+          },
+          "severity": {
+            "agreement": 0.4453,
+            "kl": 0.8715,
+            "mae": 1.4011
+          }
+        },
+        "agreement": 0.5858,
+        "kl": 0.6739
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.3452,
+            "kl": 0.9716
+          },
+          "route": {
+            "agreement": 0.5952,
+            "kl": 0.8111
+          },
+          "callback_today": {
+            "agreement": 0.619,
+            "kl": 0.3718,
+            "auc": 0.5,
+            "mae": 0.3577
+          },
+          "severity": {
+            "agreement": 0.3214,
+            "kl": 0.9485,
+            "mae": 1.3908
+          }
+        },
+        "agreement": 0.4702,
+        "kl": 0.7758
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.6792,
+            "kl": 0.6325
+          },
+          "route": {
+            "agreement": 0.9245,
+            "kl": 0.3193
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.349,
+            "auc": 0.5,
+            "mae": 0.3379
+          },
+          "severity": {
+            "agreement": 0.6415,
+            "kl": 0.7495,
+            "mae": 1.4174
+          }
+        },
+        "agreement": 0.7689,
+        "kl": 0.5126
+      }
+    },
+    "baseline_name": "plain Gemma (zero-shot decision model)",
+    "baseline": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.365,
+            "kl": 7.2634
+          },
+          "route": {
+            "agreement": 0.4526,
+            "kl": 6.0427
+          },
+          "callback_today": {
+            "agreement": 0.6423,
+            "kl": 2.7471,
+            "auc": 0.6448,
+            "mae": 0.3457
+          },
+          "severity": {
+            "agreement": 0.0876,
+            "kl": 11.5715,
+            "mae": 1.3649
+          }
+        },
+        "agreement": 0.3869,
+        "kl": 6.9062
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.4167,
+            "kl": 6.912
+          },
+          "route": {
+            "agreement": 0.4405,
+            "kl": 6.2215
+          },
+          "callback_today": {
+            "agreement": 0.6429,
+            "kl": 2.7154,
+            "auc": 0.8017,
+            "mae": 0.3514
+          },
+          "severity": {
+            "agreement": 0.131,
+            "kl": 11.0003,
+            "mae": 1.2311
+          }
+        },
+        "agreement": 0.4078,
+        "kl": 6.7123
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.283,
+            "kl": 7.8204
+          },
+          "route": {
+            "agreement": 0.4717,
+            "kl": 5.7593
+          },
+          "callback_today": {
+            "agreement": 0.6415,
+            "kl": 2.7974,
+            "auc": 0.2348,
+            "mae": 0.3368
+          },
+          "severity": {
+            "agreement": 0.0189,
+            "kl": 12.477,
+            "mae": 1.5771
+          }
+        },
+        "agreement": 0.3538,
+        "kl": 7.2135
+      }
+    },
+    "train_seconds": 482.0,
+    "predict_ms_per_message": 87.8,
+    "student": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.8613,
+            "kl": 0.1032
+          },
+          "route": {
+            "agreement": 0.9489,
+            "kl": 0.0614
+          },
+          "callback_today": {
+            "agreement": 0.9489,
+            "kl": 0.0595,
+            "auc": 0.9804,
+            "mae": 0.0927
+          },
+          "severity": {
+            "agreement": 0.8759,
+            "kl": 0.0955,
+            "mae": 0.1881
+          }
+        },
+        "agreement": 0.9087,
+        "kl": 0.0799
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.8571,
+            "kl": 0.1021
+          },
+          "route": {
+            "agreement": 0.9286,
+            "kl": 0.0832
+          },
+          "callback_today": {
+            "agreement": 0.9405,
+            "kl": 0.0695,
+            "auc": 0.982,
+            "mae": 0.1079
+          },
+          "severity": {
+            "agreement": 0.9048,
+            "kl": 0.1061,
+            "mae": 0.189
+          }
+        },
+        "agreement": 0.9078,
+        "kl": 0.0902
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.8679,
+            "kl": 0.1049
+          },
+          "route": {
+            "agreement": 0.9811,
+            "kl": 0.027
+          },
+          "callback_today": {
+            "agreement": 0.9623,
+            "kl": 0.0436,
+            "auc": 0.9697,
+            "mae": 0.0687
+          },
+          "severity": {
+            "agreement": 0.8302,
+            "kl": 0.0787,
+            "mae": 0.1867
+          }
+        },
+        "agreement": 0.9104,
+        "kl": 0.0635
+      }
+    },
+    "val": {
+      "ids": [
+        "s00003",
+        "s00021",
+        "s00028",
+        "s00035",
+        "s00042",
+        "s00048",
+        "s00054",
+        "s00065",
+        "s00074",
+        "s00120",
+        "s00174",
+        "s00180",
+        "s00186",
+        "s00187",
+        "s00224",
+        "s00228",
+        "s00245",
+        "s00274",
+        "s00279",
+        "s00284",
+        "s00286",
+        "s00306",
+        "s00309",
+        "s00312",
+        "s00313",
+        "s00314",
+        "s00333",
+        "s00345",
+        "s00346",
+        "s00353",
+        "s00427",
+        "s00445",
+        "s00477",
+        "s00492",
+        "s00502",
+        "s00506",
+        "s00508",
+        "s00513",
+        "s00520",
+        "s00535",
+        "s00548",
+        "s00560",
+        "s00572",
+        "s00585",
+        "s00612",
+        "s00615",
+        "s00620",
+        "s00647",
+        "s00664",
+        "s00670",
+        "s00680",
+        "s00687",
+        "s00694",
+        "s00696",
+        "s00711",
+        "s00732",
+        "s00780",
+        "s00805",
+        "s00806",
+        "s00821",
+        "s00828",
+        "s00833",
+        "s00836",
+        "s00837",
+        "s00840",
+        "s00869",
+        "s00880",
+        "s00888"
+      ],
+      "baseline": {
+        "n": 68,
+        "questions": {
+          "triage": {
+            "agreement": 0.3382,
+            "kl": 7.4827
+          },
+          "route": {
+            "agreement": 0.5441,
+            "kl": 4.4862
+          },
+          "callback_today": {
+            "agreement": 0.6618,
+            "kl": 2.6276,
+            "auc": 0.6772,
+            "mae": 0.3304
+          },
+          "severity": {
+            "agreement": 0.0441,
+            "kl": 11.6931,
+            "mae": 1.4107
+          }
+        },
+        "agreement": 0.3971,
+        "kl": 6.5724
+      },
+      "student": {
+        "n": 68,
+        "questions": {
+          "triage": {
+            "agreement": 0.9118,
+            "kl": 0.0903
+          },
+          "route": {
+            "agreement": 0.9853,
+            "kl": 0.0361
+          },
+          "callback_today": {
+            "agreement": 0.8824,
+            "kl": 0.073,
+            "auc": 0.9643,
+            "mae": 0.1036
+          },
+          "severity": {
+            "agreement": 0.8676,
+            "kl": 0.1214,
+            "mae": 0.2221
+          }
+        },
+        "agreement": 0.9118,
+        "kl": 0.0802
+      }
+    },
+    "kept": true,
+    "size": {
+      "parameters": 999885952,
+      "trained_parameters": 13045760
+    },
+    "seconds": 518.3,
+    "gpu": "NVIDIA A10"
+  },
+  {
+    "kind": "embed",
+    "model": "unsloth/embeddinggemma-300m",
+    "device": "cuda",
+    "config": {
+      "tune_epochs": 6
+    },
+    "split": {
+      "train": 579,
+      "val": 68,
+      "test": 137
+    },
+    "prior": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.4745,
+            "kl": 0.8404
+          },
+          "route": {
+            "agreement": 0.7226,
+            "kl": 0.6209
+          },
+          "callback_today": {
+            "agreement": 0.7007,
+            "kl": 0.3629,
+            "auc": 0.5,
+            "mae": 0.3501
+          },
+          "severity": {
+            "agreement": 0.4453,
+            "kl": 0.8715,
+            "mae": 1.4011
+          }
+        },
+        "agreement": 0.5858,
+        "kl": 0.6739
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.3452,
+            "kl": 0.9716
+          },
+          "route": {
+            "agreement": 0.5952,
+            "kl": 0.8111
+          },
+          "callback_today": {
+            "agreement": 0.619,
+            "kl": 0.3718,
+            "auc": 0.5,
+            "mae": 0.3577
+          },
+          "severity": {
+            "agreement": 0.3214,
+            "kl": 0.9485,
+            "mae": 1.3908
+          }
+        },
+        "agreement": 0.4702,
+        "kl": 0.7758
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.6792,
+            "kl": 0.6325
+          },
+          "route": {
+            "agreement": 0.9245,
+            "kl": 0.3193
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.349,
+            "auc": 0.5,
+            "mae": 0.3379
+          },
+          "severity": {
+            "agreement": 0.6415,
+            "kl": 0.7495,
+            "mae": 1.4174
+          }
+        },
+        "agreement": 0.7689,
+        "kl": 0.5126
+      }
+    },
+    "baseline_name": "prior (Gemini's average answer)",
+    "baseline": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.4745,
+            "kl": 0.8404
+          },
+          "route": {
+            "agreement": 0.7226,
+            "kl": 0.6209
+          },
+          "callback_today": {
+            "agreement": 0.7007,
+            "kl": 0.3629,
+            "auc": 0.5,
+            "mae": 0.3501
+          },
+          "severity": {
+            "agreement": 0.4453,
+            "kl": 0.8715,
+            "mae": 1.4011
+          }
+        },
+        "agreement": 0.5858,
+        "kl": 0.6739
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.3452,
+            "kl": 0.9716
+          },
+          "route": {
+            "agreement": 0.5952,
+            "kl": 0.8111
+          },
+          "callback_today": {
+            "agreement": 0.619,
+            "kl": 0.3718,
+            "auc": 0.5,
+            "mae": 0.3577
+          },
+          "severity": {
+            "agreement": 0.3214,
+            "kl": 0.9485,
+            "mae": 1.3908
+          }
+        },
+        "agreement": 0.4702,
+        "kl": 0.7758
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.6792,
+            "kl": 0.6325
+          },
+          "route": {
+            "agreement": 0.9245,
+            "kl": 0.3193
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.349,
+            "auc": 0.5,
+            "mae": 0.3379
+          },
+          "severity": {
+            "agreement": 0.6415,
+            "kl": 0.7495,
+            "mae": 1.4174
+          }
+        },
+        "agreement": 0.7689,
+        "kl": 0.5126
+      }
+    },
+    "train_seconds": 42.5,
+    "predict_ms_per_message": 3.0,
+    "student": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.854,
+            "kl": 0.143
+          },
+          "route": {
+            "agreement": 0.9124,
+            "kl": 0.0917
+          },
+          "callback_today": {
+            "agreement": 0.9051,
+            "kl": 0.0977,
+            "auc": 0.968,
+            "mae": 0.1232
+          },
+          "severity": {
+            "agreement": 0.8759,
+            "kl": 0.1554,
+            "mae": 0.2912
+          }
+        },
+        "agreement": 0.8869,
+        "kl": 0.122
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.8929,
+            "kl": 0.1197
+          },
+          "route": {
+            "agreement": 0.881,
+            "kl": 0.1083
+          },
+          "callback_today": {
+            "agreement": 0.9524,
+            "kl": 0.0997,
+            "auc": 0.9814,
+            "mae": 0.1268
+          },
+          "severity": {
+            "agreement": 0.8571,
+            "kl": 0.1344,
+            "mae": 0.2683
+          }
+        },
+        "agreement": 0.8959,
+        "kl": 0.1155
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.7925,
+            "kl": 0.1798
+          },
+          "route": {
+            "agreement": 0.9623,
+            "kl": 0.0654
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.0944,
+            "auc": 0.9116,
+            "mae": 0.1174
+          },
+          "severity": {
+            "agreement": 0.9057,
+            "kl": 0.1887,
+            "mae": 0.3275
+          }
+        },
+        "agreement": 0.8727,
+        "kl": 0.1321
+      }
+    },
+    "val": {
+      "ids": [
+        "s00003",
+        "s00021",
+        "s00028",
+        "s00035",
+        "s00042",
+        "s00048",
+        "s00054",
+        "s00065",
+        "s00074",
+        "s00120",
+        "s00174",
+        "s00180",
+        "s00186",
+        "s00187",
+        "s00224",
+        "s00228",
+        "s00245",
+        "s00274",
+        "s00279",
+        "s00284",
+        "s00286",
+        "s00306",
+        "s00309",
+        "s00312",
+        "s00313",
+        "s00314",
+        "s00333",
+        "s00345",
+        "s00346",
+        "s00353",
+        "s00427",
+        "s00445",
+        "s00477",
+        "s00492",
+        "s00502",
+        "s00506",
+        "s00508",
+        "s00513",
+        "s00520",
+        "s00535",
+        "s00548",
+        "s00560",
+        "s00572",
+        "s00585",
+        "s00612",
+        "s00615",
+        "s00620",
+        "s00647",
+        "s00664",
+        "s00670",
+        "s00680",
+        "s00687",
+        "s00694",
+        "s00696",
+        "s00711",
+        "s00732",
+        "s00780",
+        "s00805",
+        "s00806",
+        "s00821",
+        "s00828",
+        "s00833",
+        "s00836",
+        "s00837",
+        "s00840",
+        "s00869",
+        "s00880",
+        "s00888"
+      ],
+      "baseline": {
+        "n": 68,
+        "questions": {
+          "triage": {
+            "agreement": 0.4559,
+            "kl": 0.8066
+          },
+          "route": {
+            "agreement": 0.75,
+            "kl": 0.6547
+          },
+          "callback_today": {
+            "agreement": 0.6176,
+            "kl": 0.351,
+            "auc": 0.5,
+            "mae": 0.3458
+          },
+          "severity": {
+            "agreement": 0.3824,
+            "kl": 0.8629,
+            "mae": 1.4608
+          }
+        },
+        "agreement": 0.5515,
+        "kl": 0.6688
+      },
+      "student": {
+        "n": 68,
+        "questions": {
+          "triage": {
+            "agreement": 0.8676,
+            "kl": 0.1192
+          },
+          "route": {
+            "agreement": 0.9706,
+            "kl": 0.0506
+          },
+          "callback_today": {
+            "agreement": 0.8529,
+            "kl": 0.096,
+            "auc": 0.9432,
+            "mae": 0.1287
+          },
+          "severity": {
+            "agreement": 0.8382,
+            "kl": 0.1386,
+            "mae": 0.2721
+          }
+        },
+        "agreement": 0.8823,
+        "kl": 0.1011
+      }
+    },
+    "kept": true,
+    "size": {
+      "parameters": 307581696,
+      "trained_parameters": 4190224
+    },
+    "seconds": 52.0,
+    "gpu": "NVIDIA L40S"
+  },
+  {
+    "kind": "embed",
+    "model": "unsloth/embeddinggemma-300m",
+    "device": "cuda",
+    "config": {
+      "tune_epochs": 0
+    },
+    "split": {
+      "train": 579,
+      "val": 68,
+      "test": 137
+    },
+    "prior": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.4745,
+            "kl": 0.8404
+          },
+          "route": {
+            "agreement": 0.7226,
+            "kl": 0.6209
+          },
+          "callback_today": {
+            "agreement": 0.7007,
+            "kl": 0.3629,
+            "auc": 0.5,
+            "mae": 0.3501
+          },
+          "severity": {
+            "agreement": 0.4453,
+            "kl": 0.8715,
+            "mae": 1.4011
+          }
+        },
+        "agreement": 0.5858,
+        "kl": 0.6739
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.3452,
+            "kl": 0.9716
+          },
+          "route": {
+            "agreement": 0.5952,
+            "kl": 0.8111
+          },
+          "callback_today": {
+            "agreement": 0.619,
+            "kl": 0.3718,
+            "auc": 0.5,
+            "mae": 0.3577
+          },
+          "severity": {
+            "agreement": 0.3214,
+            "kl": 0.9485,
+            "mae": 1.3908
+          }
+        },
+        "agreement": 0.4702,
+        "kl": 0.7758
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.6792,
+            "kl": 0.6325
+          },
+          "route": {
+            "agreement": 0.9245,
+            "kl": 0.3193
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.349,
+            "auc": 0.5,
+            "mae": 0.3379
+          },
+          "severity": {
+            "agreement": 0.6415,
+            "kl": 0.7495,
+            "mae": 1.4174
+          }
+        },
+        "agreement": 0.7689,
+        "kl": 0.5126
+      }
+    },
+    "baseline_name": "prior (Gemini's average answer)",
+    "baseline": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.4745,
+            "kl": 0.8404
+          },
+          "route": {
+            "agreement": 0.7226,
+            "kl": 0.6209
+          },
+          "callback_today": {
+            "agreement": 0.7007,
+            "kl": 0.3629,
+            "auc": 0.5,
+            "mae": 0.3501
+          },
+          "severity": {
+            "agreement": 0.4453,
+            "kl": 0.8715,
+            "mae": 1.4011
+          }
+        },
+        "agreement": 0.5858,
+        "kl": 0.6739
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.3452,
+            "kl": 0.9716
+          },
+          "route": {
+            "agreement": 0.5952,
+            "kl": 0.8111
+          },
+          "callback_today": {
+            "agreement": 0.619,
+            "kl": 0.3718,
+            "auc": 0.5,
+            "mae": 0.3577
+          },
+          "severity": {
+            "agreement": 0.3214,
+            "kl": 0.9485,
+            "mae": 1.3908
+          }
+        },
+        "agreement": 0.4702,
+        "kl": 0.7758
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.6792,
+            "kl": 0.6325
+          },
+          "route": {
+            "agreement": 0.9245,
+            "kl": 0.3193
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.349,
+            "auc": 0.5,
+            "mae": 0.3379
+          },
+          "severity": {
+            "agreement": 0.6415,
+            "kl": 0.7495,
+            "mae": 1.4174
+          }
+        },
+        "agreement": 0.7689,
+        "kl": 0.5126
+      }
+    },
+    "train_seconds": 7.5,
+    "predict_ms_per_message": 3.6,
+    "student": {
+      "all": {
+        "n": 137,
+        "questions": {
+          "triage": {
+            "agreement": 0.7956,
+            "kl": 0.2851
+          },
+          "route": {
+            "agreement": 0.8686,
+            "kl": 0.1877
+          },
+          "callback_today": {
+            "agreement": 0.8686,
+            "kl": 0.1636,
+            "auc": 0.9291,
+            "mae": 0.1771
+          },
+          "severity": {
+            "agreement": 0.7664,
+            "kl": 0.2969,
+            "mae": 0.5096
+          }
+        },
+        "agreement": 0.8248,
+        "kl": 0.2333
+      },
+      "coverage": {
+        "n": 84,
+        "questions": {
+          "triage": {
+            "agreement": 0.8452,
+            "kl": 0.2403
+          },
+          "route": {
+            "agreement": 0.8333,
+            "kl": 0.2099
+          },
+          "callback_today": {
+            "agreement": 0.8929,
+            "kl": 0.1483,
+            "auc": 0.9507,
+            "mae": 0.1654
+          },
+          "severity": {
+            "agreement": 0.7619,
+            "kl": 0.2464,
+            "mae": 0.4241
+          }
+        },
+        "agreement": 0.8333,
+        "kl": 0.2112
+      },
+      "challenge": {
+        "n": 53,
+        "questions": {
+          "triage": {
+            "agreement": 0.717,
+            "kl": 0.3563
+          },
+          "route": {
+            "agreement": 0.9245,
+            "kl": 0.1525
+          },
+          "callback_today": {
+            "agreement": 0.8302,
+            "kl": 0.1879,
+            "auc": 0.8763,
+            "mae": 0.1958
+          },
+          "severity": {
+            "agreement": 0.7736,
+            "kl": 0.3769,
+            "mae": 0.6452
+          }
+        },
+        "agreement": 0.8113,
+        "kl": 0.2684
+      }
+    },
+    "val": {
+      "ids": [
+        "s00003",
+        "s00021",
+        "s00028",
+        "s00035",
+        "s00042",
+        "s00048",
+        "s00054",
+        "s00065",
+        "s00074",
+        "s00120",
+        "s00174",
+        "s00180",
+        "s00186",
+        "s00187",
+        "s00224",
+        "s00228",
+        "s00245",
+        "s00274",
+        "s00279",
+        "s00284",
+        "s00286",
+        "s00306",
+        "s00309",
+        "s00312",
+        "s00313",
+        "s00314",
+        "s00333",
+        "s00345",
+        "s00346",
+        "s00353",
+        "s00427",
+        "s00445",
+        "s00477",
+        "s00492",
+        "s00502",
+        "s00506",
+        "s00508",
+        "s00513",
+        "s00520",
+        "s00535",
+        "s00548",
+        "s00560",
+        "s00572",
+        "s00585",
+        "s00612",
+        "s00615",
+        "s00620",
+        "s00647",
+        "s00664",
+        "s00670",
+        "s00680",
+        "s00687",
+        "s00694",
+        "s00696",
+        "s00711",
+        "s00732",
+        "s00780",
+        "s00805",
+        "s00806",
+        "s00821",
+        "s00828",
+        "s00833",
+        "s00836",
+        "s00837",
+        "s00840",
+        "s00869",
+        "s00880",
+        "s00888"
+      ],
+      "baseline": {
+        "n": 68,
+        "questions": {
+          "triage": {
+            "agreement": 0.4559,
+            "kl": 0.8066
+          },
+          "route": {
+            "agreement": 0.75,
+            "kl": 0.6547
+          },
+          "callback_today": {
+            "agreement": 0.6176,
+            "kl": 0.351,
+            "auc": 0.5,
+            "mae": 0.3458
+          },
+          "severity": {
+            "agreement": 0.3824,
+            "kl": 0.8629,
+            "mae": 1.4608
+          }
+        },
+        "agreement": 0.5515,
+        "kl": 0.6688
+      },
+      "student": {
+        "n": 68,
+        "questions": {
+          "triage": {
+            "agreement": 0.8088,
+            "kl": 0.215
+          },
+          "route": {
+            "agreement": 0.9412,
+            "kl": 0.1214
+          },
+          "callback_today": {
+            "agreement": 0.8382,
+            "kl": 0.1489,
+            "auc": 0.9176,
+            "mae": 0.1787
+          },
+          "severity": {
+            "agreement": 0.6912,
+            "kl": 0.2569,
+            "mae": 0.4748
+          }
+        },
+        "agreement": 0.8198,
+        "kl": 0.1855
+      }
+    },
+    "kept": true,
+    "size": {
+      "parameters": 307581696,
+      "trained_parameters": 12304
+    },
+    "seconds": 19.1,
+    "gpu": "NVIDIA L40S"
+  }
+]

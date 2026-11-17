@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gemma lab: local copies of Gemini for clinic messages</title>
+<style>
+:root {
+  --desk: #E3E9EE;
+  --paper: #FFFFFF;
+  --pink: #F7D4DD;
+  --canary: #FFF0A8;
+  --ink: #1D2C6B;
+  --ink-soft: #4A5689;
+  --rule: #B9C6D6;
+  --stamp: #C4122F;
+  --mark: #FFE45C;
+  --shadow: 0 1px 1px rgba(29, 44, 107, .08), 0 6px 18px -6px rgba(29, 44, 107, .22);
+  --step: clamp(1rem, .95rem + .2vw, 1.0625rem);
+}
+* { box-sizing: border-box; }
+html { background: var(--desk); color: var(--ink); }
+body {
+  margin: 0;
+  font-family: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: var(--step);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+a { color: var(--ink); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+button, input, textarea, select { font: inherit; color: inherit; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+
+/* top bar */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 0; }
+.brand { font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; }
+.brand span { font-weight: 400; color: var(--ink-soft); }
+.status { display: inline-flex; align-items: center; gap: .5rem; font-size: .9rem; color: var(--ink-soft); }
+.status i { width: .6rem; height: .6rem; border-radius: 50%; background: var(--rule); display: inline-block; }
+.status.on i { background: #2E8B57; }
+.status.off i { background: var(--stamp); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; padding: clamp(2rem, 6vw, 4.5rem) 0 clamp(3rem, 7vw, 5.5rem); }
+h1 { font-size: clamp(2.6rem, 2rem + 3.2vw, 4.6rem); line-height: .98; letter-spacing: -.035em; font-weight: 800; margin: 0 0 1.4rem; }
+.lede { font-size: 1.2rem; line-height: 1.5; max-width: 34ch; margin: 0 0 1.6rem; }
+.jump { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; padding: 0; margin: 0; list-style: none; font-weight: 700; }
+
+/* paper sheets */
+.sheet { background: var(--paper); box-shadow: var(--shadow); border-radius: 3px; padding: 1.4rem 1.5rem 1.2rem; position: relative; }
+.sheet h3 { margin: 0; font-size: 1rem; font-weight: 800; }
+.sheet .who { display: block; font-size: .85rem; color: var(--ink-soft); }
+.sheet header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 3.1rem; border-bottom: 2px solid var(--ink); padding-bottom: .5rem; margin-bottom: .8rem; }
+.msg { font-size: .95rem; line-height: 1.45; margin: 0 0 1rem; min-height: 4.4em; }
+.msg small { display: block; color: var(--ink-soft); font-size: .8rem; margin-bottom: .2rem; }
+.field { display: grid; grid-template-columns: 7.2rem 1fr 3.2rem; gap: .2rem .8rem; align-items: center; padding: .42rem 0; border-top: 1px solid var(--rule); font-size: .9rem; }
+.field .q { color: var(--ink-soft); }
+.field .a { font-weight: 700; }
+.field .p { text-align: right; }
+.bar { grid-column: 2 / 4; height: 5px; background: #E9EEF4; border-radius: 3px; overflow: hidden; }
+.bar b { display: block; height: 100%; background: var(--ink); width: 0; transition: width .5s ease; }
+
+.slips { position: relative; padding: 1.2rem 1.4rem 0 0; }
+.slips .carbon { background: var(--pink); position: absolute; inset: 1.2rem 0 0 1.4rem; transform: rotate(1.3deg); }
+.slips .original { transition: transform .6s cubic-bezier(.3, .7, .2, 1); transform-origin: 50% 0; z-index: 1; }
+.slips.lifted .original { transform: perspective(1600px) rotateX(84deg); }
+.slips .carbon .bar { background: rgba(255, 255, 255, .55); }
+.stamp { flex: none; border: 3px solid var(--stamp); color: var(--stamp); font-weight: 800; padding: .1rem .6rem; border-radius: 4px; transform: rotate(-8deg); font-size: 1.05rem; opacity: .85; mix-blend-mode: multiply; }
+.stamp:empty { display: none; }
+.slip-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-top: 1.4rem; }
+.match { font-size: .95rem; margin: .8rem 0 0; }
+.btn { border: 2px solid var(--ink); background: var(--paper); border-radius: 999px; padding: .45rem 1rem; cursor: pointer; font-weight: 700; }
+.btn:hover { background: var(--canary); }
+.btn.primary { background: var(--ink); color: var(--paper); }
+.btn.primary:hover { background: #2B3D8A; }
+.btn[disabled] { opacity: .5; cursor: progress; }
+.btn[aria-pressed="true"] { background: var(--pink); }
+
+/* sections */
+section.part { padding: clamp(3rem, 7vw, 5rem) 0; border-top: 2px solid var(--ink); }
+h2 { font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.8rem); letter-spacing: -.025em; line-height: 1.05; font-weight: 800; margin: 0 0 .8rem; }
+.intro { max-width: 62ch; margin: 0 0 2rem; font-size: 1.08rem; }
+
+.steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; counter-reset: step; }
+.steps li { counter-increment: step; border-top: 1px solid var(--ink); padding-top: .8rem; }
+.steps li::before { content: counter(step); font-weight: 800; font-size: 2.4rem; line-height: 1; display: block; margin-bottom: .4rem; }
+.steps strong { display: block; margin-bottom: .2rem; }
+.steps p { margin: 0; font-size: .95rem; }
+
+.tool { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+label { display: block; font-weight: 700; margin-bottom: .35rem; }
+textarea, input[type=text], select { width: 100%; background: var(--paper); border: 2px solid var(--ink); border-radius: 4px; padding: .7rem .8rem; }
+textarea { min-height: 9.5rem; resize: vertical; line-height: 1.45; }
+.row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-top: .8rem; }
+.hint { font-size: .88rem; color: var(--ink-soft); margin: .5rem 0 0; }
+.canary { background: var(--canary); }
+.empty { color: var(--ink-soft); font-size: .95rem; margin: 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .8rem; }
+.chip { border: 1px solid var(--ink); background: transparent; border-radius: 999px; padding: .25rem .75rem; cursor: pointer; font-size: .88rem; }
+.chip:hover { background: var(--paper); }
+
+.inbox { list-style: none; margin: 0; padding: 0; }
+.inbox li { display: grid; grid-template-columns: 3.4rem 1fr; gap: .8rem; padding: .75rem 0; border-top: 1px solid var(--rule); }
+.inbox li:first-child { border-top: 0; }
+.inbox .score { font-weight: 800; font-size: 1.05rem; }
+.inbox .score small { display: block; font-weight: 400; font-size: .72rem; color: var(--ink-soft); }
+.inbox p { margin: 0; font-size: .92rem; line-height: 1.45; }
+
+.log { list-style: none; margin: 0; padding: 0; }
+.log li { border-top: 1px solid var(--rule); }
+.log button { width: 100%; text-align: left; background: none; border: 0; padding: .65rem .2rem; cursor: pointer; display: grid; grid-template-columns: 4.4rem 1fr; gap: .6rem; font-size: .92rem; }
+.log button[aria-current="true"] { background: var(--paper); box-shadow: inset 4px 0 0 var(--ink); }
+.log .id { font-weight: 700; }
+.log .first { color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+audio { width: 100%; margin: .4rem 0 .8rem; }
+.compare { display: grid; gap: .8rem; }
+.compare h4 { margin: 0 0 .2rem; font-size: .88rem; color: var(--ink-soft); font-weight: 700; }
+.compare p { margin: 0; line-height: 1.6; }
+.miss { text-decoration: line-through; text-decoration-color: var(--stamp); text-decoration-thickness: 2px; color: var(--ink-soft); }
+.wrong { background: var(--mark); border-radius: 2px; padding: 0 .1em; }
+.wer { font-weight: 800; }
+
+/* result tables */
+.table-wrap { overflow-x: auto; margin-top: 2.4rem; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .93rem; }
+caption { text-align: left; font-weight: 800; font-size: 1.05rem; padding-bottom: .6rem; }
+caption span { display: block; font-weight: 400; font-size: .88rem; color: var(--ink-soft); }
+th, td { padding: .55rem .7rem; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+th:first-child, td:first-child { text-align: left; }
+thead th { border-bottom: 2px solid var(--ink); font-weight: 700; font-size: .85rem; }
+td.best { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); font-weight: 800; }
+tr.base td { color: var(--ink-soft); }
+
+.limits { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+.limits h3 { font-size: 1.2rem; margin: 0 0 .6rem; }
+.limits ul { margin: 0; padding-left: 1.1rem; }
+.limits li { margin-bottom: .55rem; }
+footer { padding: 2.5rem 0 4rem; border-top: 2px solid var(--ink); font-size: .95rem; }
+code { font-family: inherit; font-weight: 700; background: var(--paper); padding: .05rem .35rem; border-radius: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 880px) {
+  .hero, .tool, .limits { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">gemma lab <span>local copies of Gemini for clinic messages</span></div>
+    <div class="status" id="status" role="status"><i></i><span>Looking for the local server</span></div>
+  </div>
+
+  <section class="hero" aria-labelledby="title">
+    <div>
+      <h1 id="title">Gemini answers once. A copy answers here.</h1>
+      <p class="lede">Gemini sorted 1,566 fake clinic messages. Its answers taught small models that run on this computer, so real patient messages never leave the clinic.</p>
+      <ul class="jump">
+        <li><a href="#decide">Sort a message</a></li>
+        <li><a href="#search">Search the inbox</a></li>
+        <li><a href="#listen">Write down a voicemail</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="slips" id="slips">
+        <article class="sheet carbon" aria-label="The local model's copy">
+          <header><div><h3>Triage slip, copy</h3><span class="who">Gemma 3 1B on this computer</span></div><div class="stamp" data-stamp="student"></div></header>
+          <p class="msg" data-msg></p>
+          <div data-fields="student"></div>
+        </article>
+        <article class="sheet original" aria-label="Gemini's original">
+          <header><div><h3>Triage slip, original</h3><span class="who">Gemini Decisions API</span></div><div class="stamp" data-stamp="teacher"></div></header>
+          <p class="msg" data-msg></p>
+          <div data-fields="teacher"></div>
+        </article>
+      </div>
+      <div class="slip-controls">
+        <button class="btn" id="prev">Previous message</button>
+        <button class="btn" id="next">Next message</button>
+        <button class="btn primary" id="lift" aria-pressed="false">Lift the original</button>
+      </div>
+      <p class="match" id="match" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="part" aria-labelledby="how">
+    <h2 id="how">How the copy is made</h2>
+    <p class="intro">This is distillation. A large model teaches small models with examples. No real patient data is used at any step.</p>
+    <ol class="steps">
+      <li><strong>Gemini writes fake messages</strong><p>Portal messages and voicemails, with made-up people. Each one has a different topic, urgency, sender and style.</p></li>
+      <li><strong>Gemini answers them</strong><p>The Decisions API gives a probability for each answer to four triage questions, and grades messages against staff searches.</p></li>
+      <li><strong>Small models learn on Modal</strong><p>Gemma 3 1B and EmbeddingGemma learn to give the same probabilities. A GPU in the cloud trains them in minutes.</p></li>
+      <li><strong>They run on this computer</strong><p>The local server answers the same requests as the Gemini API. It keeps nothing that it reads.</p></li>
+    </ol>
+  </section>
+
+  <section class="part" id="decide" aria-labelledby="decide-h">
+    <h2 id="decide-h">Sort a message</h2>
+    <p class="intro">The local model answers four questions: how urgent, which team, a call back today, and how severe. Type a message or pick an example.</p>
+    <div class="tool">
+      <form id="decide-form">
+        <label for="decide-text">Patient message</label>
+        <textarea id="decide-text" required></textarea>
+        <label for="decide-example" style="margin-top:.9rem">Or pick a test message</label>
+        <select id="decide-example"></select>
+        <div class="row">
+          <button class="btn primary" type="submit" id="decide-go">Sort this message</button>
+          <span class="hint" id="decide-took"></span>
+        </div>
+        <p class="hint">The text goes only to the server at 127.0.0.1 on this computer.</p>
+      </form>
+      <article class="sheet canary" aria-live="polite">
+        <header><div><h3>Triage slip</h3><span class="who" id="decide-model">Local model</span></div><div class="stamp" id="decide-stamp"></div></header>
+        <div id="decide-out"><p class="empty">The answers show here.</p></div>
+      </article>
+    </div>
+    <div class="table-wrap" id="decide-table"></div>
+  </section>
+
+  <section class="part" id="search" aria-labelledby="search-h">
+    <h2 id="search-h">Search the inbox</h2>
+    <p class="intro">Staff search the inbox in their own words. The local reranker puts the messages that match first. Here it searches 40 test messages that it never saw in training.</p>
+    <div class="tool">
+      <form id="search-form">
+        <label for="search-q">Search</label>
+        <input type="text" id="search-q" required placeholder="for example: refill for blood pressure pills">
+        <div class="chips" id="search-chips"></div>
+        <div class="row">
+          <button class="btn primary" type="submit" id="search-go">Search 40 messages</button>
+          <span class="hint" id="search-took"></span>
+        </div>
+      </form>
+      <article class="sheet" aria-live="polite">
+        <header><div><h3>Inbox, best matches first</h3><span class="who" id="search-model">Local reranker</span></div></header>
+        <ul class="inbox" id="search-out"><li><span></span><p class="empty">The top five messages show here, with the chance that each one matches.</p></li></ul>
+      </article>
+    </div>
+    <div class="table-wrap" id="search-table"></div>
+  </section>
+
+  <section class="part" id="listen" aria-labelledby="listen-h">
+    <h2 id="listen-h">Write down a voicemail</h2>
+    <p class="intro">EmbeddingGemma 2 can hear, but it cannot write. A small reader turns what it hears into words, the way eg2.haku.sh does. The test voicemails go through a phone-line effect first.</p>
+    <div class="tool">
+      <div>
+        <label id="log-label">Test voicemails</label>
+        <ul class="log" id="log" aria-labelledby="log-label"></ul>
+        <label for="upload" style="margin-top:1.2rem">Or use your own audio file (WAV, FLAC or OGG)</label>
+        <input type="file" id="upload" accept=".wav,.flac,.ogg,audio/wav,audio/flac,audio/ogg">
+      </div>
+      <article class="sheet" aria-live="polite">
+        <header><div><h3>Voicemail log</h3><span class="who" id="listen-model">Local transcriber</span></div></header>
+        <audio id="player" controls preload="none"></audio>
+        <div class="row" style="margin-top:0">
+          <button class="btn primary" id="listen-go">Write it down</button>
+          <span class="hint" id="listen-took"></span>
+        </div>
+        <div class="compare" id="listen-out" style="margin-top:1rem"><p class="empty">Pick a voicemail, then write it down. Words that the model missed are struck through. Wrong words are marked.</p></div>
+      </article>
+    </div>
+    <div class="table-wrap" id="listen-table"></div>
+  </section>
+
+  <section class="part" aria-labelledby="limits-h">
+    <h2 id="limits-h">What this shows, and what it does not</h2>
+    <div class="limits">
+      <div>
+        <h3>It shows</h3>
+        <ul>
+          <li>The whole path works: real Gemini calls make the labels, Modal trains, and the models answer on this computer.</li>
+          <li>Every score is on test data that the models did not see. Every choice (epoch, model, LM weight) was made on separate val data.</li>
+          <li>The LibriSpeech score is on real human voices.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>It does not show</h3>
+        <ul>
+          <li>Quality on real clinic messages. All the messages are fake, and the same Gemini writer made train and test.</li>
+          <li>Clinical correctness. The truth is Gemini's answer, not a clinician's.</li>
+          <li>Real phone calls. The test voicemails are TTS voices with a phone-line effect.</li>
+          <li>Small differences in search. The test has only 36 searches.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Run <code>runit</code> in the project folder, then open <a href="http://127.0.0.1:8250/demo">127.0.0.1:8250/demo</a>. The results are from 14–15 November 2026. Training reports are in <code>data/reports</code>.
+  </footer>
+</div>
+
+<script>
+const LAB = /*LAB_DATA*/null;
+
+const RESULTS = {
+  decide: {
+    caption: "Three students on 296 test messages",
+    note: "Agreement: the top answer is the same as Gemini's, mean of the four questions. Speed on an NVIDIA A10.",
+    head: ["Model", "Agreement", "Hard messages", "Distance to Gemini (KL)", "Trained numbers", "ms per message"],
+    rows: [
+      ["Gemini's average answer (no model)", "56.8%", "70.8%", "0.679", "0", "–", "base"],
+      ["Plain Gemma 3 1B, not taught", "40.3%", "34.9%", "6.757", "0", "–", "base"],
+      ["Gemma 3 1B + LoRA", "91.7%", "92.7%", "0.051", "13.0M", "92.1"],
+      ["EmbeddingGemma 1 + LoRA", "91.0%", "91.6%", "0.075", "4.2M", "5.6"],
+      ["EmbeddingGemma 2 + LoRA", "88.8%", "90.1%", "0.101", "5.1M", "4.9"],
+      ["EmbeddingGemma 1, frozen", "86.7%", "86.3%", "0.179", "12k", "4.4"],
+    ],
+    best: { 1: 2, 2: 2, 3: 2, 5: 5 },
+  },
+  search: {
+    caption: "Three rerankers on 36 test searches over 296 messages",
+    note: "NDCG@10: 1.0 means the same order as Gemini's grades. Recall@10: the share of Gemini's matches in the top ten. Speed on an NVIDIA A10.",
+    head: ["Model", "NDCG@10", "Recall@10", "Trained numbers", "ms per message"],
+    rows: [
+      ["Plain Gemma 3 1B", "0.451", "38.0%", "0", "–", "base"],
+      ["Plain EmbeddingGemma 1", "0.652", "58.5%", "0", "–", "base"],
+      ["Plain EmbeddingGemma 2", "0.606", "52.6%", "0", "–", "base"],
+      ["Gemma 3 1B + LoRA, reads search and message together", "0.800", "73.9%", "13.0M", "19.7"],
+      ["EmbeddingGemma 1 + LoRA, compares vectors", "0.776", "77.8%", "4.2M", "0.17"],
+      ["EmbeddingGemma 2 + LoRA, compares vectors", "0.748", "74.3%", "5.0M", "0.16"],
+      ["Two stages: vectors keep 30, then Gemma orders them", "0.809", "77.5%", "–", "–"],
+    ],
+    best: { 1: 6, 2: 4, 4: 5 },
+  },
+  listen: {
+    caption: "The transcriber, round by round",
+    note: "Word error rate: the share of words that are wrong, missing or extra. Lower is better.",
+    head: ["Version", "Test voicemails, phone line", "LibriSpeech test-clean", "Trained numbers"],
+    rows: [
+      ["gemini-3.5-transcribe, the bar", "2.8%", "–", "–", "base"],
+      ["100 h of speech, 4-layer reader", "11.6%", "8.1%", "13.8M"],
+      ["460 h of speech, 6-layer reader", "9.3%", "5.9%", "20.1M"],
+      ["The same, overlapping 30 s windows", "8.1%", "–", "20.1M"],
+      ["The same, with a word language model", "6.9%", "–", "20.1M + 7 MB"],
+    ],
+    best: { 1: 4, 2: 2 },
+  },
+};
+
+const $ = (s, el = document) => el.querySelector(s);
+const pct = p => `${Math.round(p * 100)}%`;
+const LEVELS = ["Emergency", "Same day", "Routine", "Admin"];
+const NAMES = { triage: "Urgency", route: "Team", callback_today: "Call back today", severity: "Severity" };
+const nice = s => s.replace(/_/g, " ").replace(/^./, c => c.toUpperCase());
+
+function table(id, t) {
+  const el = document.getElementById(id);
+  const head = t.head.map(h => `<th scope="col">${h}</th>`).join("");
+  const rows = t.rows.map((r, i) => {
+    const cls = r[t.head.length] || "";
+    const cells = r.slice(0, t.head.length).map((c, j) => {
+      const best = t.best[j] === i ? ' class="best"' : "";
+      return j === 0 ? `<th scope="row"${best}>${c}</th>` : `<td${best}>${c}</td>`;
+    }).join("");
+    return `<tr class="${cls}">${cells}</tr>`;
+  }).join("");
+  el.innerHTML = `<table><caption>${t.caption}<span>${t.note}</span></caption><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+table("decide-table", RESULTS.decide);
+table("search-table", RESULTS.search);
+table("listen-table", RESULTS.listen);
+document.querySelectorAll("table th[scope=row].best").forEach(th => th.classList.remove("best"));
+
+/* fields of a triage slip, from probabilities in option order */
+function fields(probs) {
+  return Object.keys(NAMES).map(q => {
+    const p = probs[q], opts = LAB.options[q];
+    const top = p.indexOf(Math.max(...p));
+    const answer = q === "callback_today" ? (top === 0 ? "Yes" : "No") : nice(opts[top]);
+    return `<div class="field"><span class="q">${NAMES[q]}</span><span class="a">${answer}</span><span class="p">${pct(p[top])}</span><span class="bar" aria-hidden="true"><b style="width:${p[top] * 100}%"></b></span></div>`;
+  }).join("");
+}
+const topOf = p => p.indexOf(Math.max(...p));
+
+/* hero: Gemini's original over the local copy */
+let slipAt = 0;
+function showSlip() {
+  const s = LAB.slips[slipAt];
+  if (!s) { $("#match").textContent = "Train a student first: there are no saved answers to show."; return; }
+  document.querySelectorAll("[data-msg]").forEach(el => el.innerHTML = `<small>${s.channel === "voicemail transcript" ? "Voicemail" : "Portal message"}, test message ${s.id}</small>${escape(s.message.length > 260 ? s.message.slice(0, 257) + "…" : s.message)}`);
+  for (const who of ["teacher", "student"]) {
+    $(`[data-fields=${who}]`).innerHTML = fields(s[who]);
+    $(`[data-stamp=${who}]`).textContent = LEVELS[topOf(s[who].triage)];
+  }
+  const same = Object.keys(NAMES).filter(q => topOf(s.teacher[q]) === topOf(s.student[q])).length;
+  $("#match").textContent = `Message ${slipAt + 1} of ${LAB.slips.length}. The copy has the same top answer as Gemini on ${same} of 4 questions.`;
+}
+function escape(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+$("#prev").onclick = () => { slipAt = (slipAt + LAB.slips.length - 1) % LAB.slips.length; showSlip(); };
+$("#next").onclick = () => { slipAt = (slipAt + 1) % LAB.slips.length; showSlip(); };
+$("#lift").onclick = e => {
+  const on = $("#slips").classList.toggle("lifted");
+  e.currentTarget.setAttribute("aria-pressed", on);
+  e.currentTarget.textContent = on ? "Put the original back" : "Lift the original";
+};
+showSlip();
+
+/* local server */
+async function api(path, body, type = "application/json") {
+  const r = await fetch(path, { method: "POST", headers: { "content-type": type }, body: type === "application/json" ? JSON.stringify(body) : body });
+  if (!r.ok) throw new Error(`${r.status}: ${(await r.text()).slice(0, 200)}`);
+  return r.json();
+}
+async function health() {
+  const st = $("#status");
+  try {
+    const h = await (await fetch("/health")).json();
+    st.className = "status on";
+    st.querySelector("span").textContent = `Local server running on ${h.device}`;
+  } catch {
+    st.className = "status off";
+    st.querySelector("span").textContent = "Local server not running: run runit, then open 127.0.0.1:8250/demo";
+  }
+}
+health();
+function busy(btn, on, text) { btn.disabled = on; if (text) btn.textContent = text; }
+
+/* sort a message */
+const ex = $("#decide-example");
+ex.innerHTML = `<option value="">Choose…</option>` + LAB.examples.map((m, i) => `<option value="${i}">${escape(m.slice(0, 90))}…</option>`).join("");
+ex.onchange = () => { if (ex.value !== "") $("#decide-text").value = LAB.examples[+ex.value]; };
+$("#decide-text").value = LAB.examples[0] || "";
+$("#decide-form").onsubmit = async e => {
+  e.preventDefault();
+  const btn = $("#decide-go");
+  busy(btn, true, "Sorting…");
+  try {
+    const r = await api("/v1/decisions", { input: $("#decide-text").value, questions: LAB.questions });
+    const probs = {};
+    for (const q of Object.keys(NAMES)) {
+      const a = r.answers[q];
+      probs[q] = a.type === "noul" ? [a.noul, 1 - a.noul] : LAB.options[q].map((o, i) => a.probabilities[a.type === "score" ? String(i) : o]);
+    }
+    $("#decide-out").innerHTML = fields(probs);
+    const stamp = $("#decide-stamp");
+    stamp.textContent = LEVELS[topOf(probs.triage)];
+    $("#decide-model").textContent = r.model.replace(/^lora:/, "Gemma 3 1B + LoRA, ");
+    $("#decide-took").textContent = `Answered in ${r.took_ms} ms on this computer.`;
+  } catch (err) {
+    $("#decide-out").innerHTML = `<p class="empty">The local server did not answer (${escape(err.message)}). Start it with runit.</p>`;
+  } finally { busy(btn, false, "Sort this message"); }
+};
+
+/* search the inbox */
+const chips = ["refill for blood pressure pills", "child with a high fever", "chest pain", "question about a bill", "fall at home", "trouble breathing"];
+$("#search-chips").innerHTML = chips.map(c => `<button type="button" class="chip">${c}</button>`).join("");
+$("#search-chips").onclick = e => { if (e.target.matches(".chip")) { $("#search-q").value = e.target.textContent; $("#search-form").requestSubmit(); } };
+$("#search-form").onsubmit = async e => {
+  e.preventDefault();
+  const btn = $("#search-go");
+  busy(btn, true, "Searching…");
+  try {
+    const r = await api("/v1/rerank", { query: $("#search-q").value, documents: LAB.inbox.map(m => m.message), top_n: 5 });
+    $("#search-out").innerHTML = r.results.map(x => `<li><span class="score">${pct(x.relevance_score)}<small>match</small></span><p>${escape(x.document.length > 300 ? x.document.slice(0, 297) + "…" : x.document)}</p></li>`).join("");
+    $("#search-model").textContent = r.model.startsWith("cross") ? "Gemma 3 1B + LoRA" : "EmbeddingGemma + LoRA";
+    $("#search-took").textContent = `40 messages in ${(r.took_ms / 1000).toFixed(1)} s on this computer.`;
+  } catch (err) {
+    $("#search-out").innerHTML = `<li><span></span><p class="empty">The local server did not answer (${escape(err.message)}). Start it with runit.</p></li>`;
+  } finally { busy(btn, false, "Search 40 messages"); }
+};
+
+/* write down a voicemail */
+let clip = LAB.clips[0], upload = null;
+function showLog() {
+  $("#log").innerHTML = LAB.clips.map(c => `<li><button aria-current="${c === clip}" data-id="${c.id}"><span class="id">${c.id}</span><span class="first">${escape(c.spoken)}</span></button></li>`).join("");
+  if (clip) $("#player").src = `/demo/audio/${clip.id}.wav`;
+}
+$("#log").onclick = e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  clip = LAB.clips.find(c => c.id === b.dataset.id); upload = null; $("#upload").value = "";
+  showLog();
+  $("#listen-out").innerHTML = `<div><h4>What the caller says</h4><p>${escape(clip.spoken)}</p></div>`;
+};
+$("#upload").onchange = e => {
+  upload = e.target.files[0] || null;
+  if (upload) { $("#player").src = URL.createObjectURL(upload); $("#listen-out").innerHTML = `<p class="empty">${escape(upload.name)} is ready.</p>`; }
+};
+/* word alignment: the truth against what the model heard */
+function align(ref, hyp) {
+  const n = ref.length, m = hyp.length, d = Array.from({ length: n + 1 }, (_, i) => [i, ...Array(m).fill(0)]);
+  for (let j = 1; j <= m; j++) d[0][j] = j;
+  for (let i = 1; i <= n; i++) for (let j = 1; j <= m; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (ref[i - 1] === hyp[j - 1] ? 0 : 1));
+  const out = []; let i = n, j = m;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && d[i][j] === d[i - 1][j - 1] + (ref[i - 1] === hyp[j - 1] ? 0 : 1)) {
+      out.push(ref[i - 1] === hyp[j - 1] ? { w: hyp[j - 1] } : { w: hyp[j - 1], wrong: true }); i--; j--;
+    } else if (i > 0 && d[i][j] === d[i - 1][j] + 1) { out.push({ w: ref[i - 1], miss: true }); i--; }
+    else { out.push({ w: hyp[j - 1], wrong: true }); j--; }
+  }
+  return { words: out.reverse(), wer: d[n][m] / Math.max(1, n) };
+}
+$("#listen-go").onclick = async () => {
+  const btn = $("#listen-go");
+  const c = clip, file = upload;
+  if (!c && !file) return;
+  busy(btn, true, "Listening…");
+  try {
+    const body = file ? await file.arrayBuffer() : await (await fetch(`/demo/audio/${c.id}.wav`)).arrayBuffer();
+    const r = await api(`/v1/transcribe${file ? "" : "?phone=true"}`, body, "application/octet-stream");
+    let html = `<div><h4>What the model wrote</h4><p>${escape(r.text)}</p></div>`;
+    if (!file) {
+      const a = align(c.words, r.words);
+      html += `<div><h4>Word by word against the script (word error rate <span class="wer">${(a.wer * 100).toFixed(1)}%</span>)</h4><p>${a.words.map(x => x.miss ? `<span class="miss">${x.w}</span>` : x.wrong ? `<span class="wrong">${x.w}</span>` : x.w).join(" ")}</p></div>`;
+      html += `<div><h4>What the caller says (${c.id})</h4><p>${escape(c.spoken)}</p></div>`;
+    }
+    $("#listen-out").innerHTML = html;
+    $("#listen-model").textContent = r.model.replace(/^transcriber:/, "");
+    $("#listen-took").textContent = `${r.audio_seconds} s of audio in ${(r.took_ms / 1000).toFixed(1)} s on this computer.`;
+  } catch (err) {
+    $("#listen-out").innerHTML = `<p class="empty">The local server did not answer (${escape(err.message)}). Start it with runit.</p>`;
+  } finally { busy(btn, false, "Write it down"); }
+};
+showLog();
+</script>
+</body>
+</html>

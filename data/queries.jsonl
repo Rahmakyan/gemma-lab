@@ -1,0 +1,200 @@
+{"id": "q000", "query": "statin refill", "split": "test"}
+{"id": "q001", "query": "billing dispute", "split": "train"}
+{"id": "q002", "query": "fmla form request", "split": "val"}
+{"id": "q003", "query": "chest pain", "split": "train"}
+{"id": "q004", "query": "bp log", "split": "train"}
+{"id": "q005", "query": "flu shot appointment", "split": "test"}
+{"id": "q006", "query": "lab result question", "split": "train"}
+{"id": "q007", "query": "rash photo", "split": "train"}
+{"id": "q008", "query": "prior auth", "split": "train"}
+{"id": "q009", "query": "zofran refill", "split": "val"}
+{"id": "q010", "query": "parents worried about a child's fever", "split": "train"}
+{"id": "q011", "query": "someone who ran out of insulin", "split": "train"}
+{"id": "q012", "query": "patient needing referral to cardiology", "split": "train"}
+{"id": "q013", "query": "mom asking about toddler vomiting", "split": "train"}
+{"id": "q014", "query": "elderly patient who had a fall yesterday", "split": "train"}
+{"id": "q015", "query": "daughter managing medication for aging mother", "split": "val"}
+{"id": "q016", "query": "husband reporting wife had sudden vision loss", "split": "train"}
+{"id": "q017", "query": "patient asking if their biopsy came back negative", "split": "train"}
+{"id": "q018", "query": "newborn missing newborn screening test", "split": "test"}
+{"id": "q019", "query": "patient wanting to cancel appointment because of snow", "split": "train"}
+{"id": "q020", "query": "refill requests that are not for controlled drugs", "split": "train"}
+{"id": "q021", "query": "messages from caregivers, not patients", "split": "train"}
+{"id": "q022", "query": "voicemails received after hours without callback logged", "split": "val"}
+{"id": "q023", "query": "portal messages about rash excluding hives", "split": "train"}
+{"id": "q024", "query": "prescription questions excluding antibiotics", "split": "train"}
+{"id": "q025", "query": "insurance approval updates not related to surgery", "split": "test"}
+{"id": "q026", "query": "messages mentioning dizziness but not chest pain", "split": "train"}
+{"id": "q027", "query": "forms needing doctor signature before Friday", "split": "test"}
+{"id": "q028", "query": "unread portal messages sent over 48 hours ago", "split": "train"}
+{"id": "q029", "query": "records request for disability claim without release form", "split": "train"}
+{"id": "q030", "query": "angry voicemails about wait times", "split": "train"}
+{"id": "q031", "query": "anything that sounds like an emergency", "split": "train"}
+{"id": "q032", "query": "frustrated messages regarding high bill", "split": "train"}
+{"id": "q033", "query": "voicemail transcripts mentioning suicidal thoughts", "split": "train"}
+{"id": "q034", "query": "panicked parent calling about breathing trouble", "split": "train"}
+{"id": "q035", "query": "crying patient leaving audio message about severe migraine", "split": "train"}
+{"id": "q036", "query": "urgent request for epinephrine refill", "split": "train"}
+{"id": "q037", "query": "voicemails from adult children calling about dementia parents", "split": "test"}
+{"id": "q038", "query": "patient threatening to switch clinics over delayed test results", "split": "test"}
+{"id": "q039", "query": "anxious pregnant patient complaining of spot bleeding", "split": "train"}
+{"id": "q040", "query": "school physical form", "split": "train"}
+{"id": "q041", "query": "side effects of Ozempic nausea", "split": "train"}
+{"id": "q042", "query": "palpitations after taking decongestant", "split": "train"}
+{"id": "q043", "query": "medication reconciliation", "split": "train"}
+{"id": "q044", "query": "partner calling to reschedule colonoscopy", "split": "train"}
+{"id": "q045", "query": "uti symptoms weekend voicemail", "split": "train"}
+{"id": "q046", "query": "work excuse note needed for covid", "split": "test"}
+{"id": "q047", "query": "patient reporting allergic reaction to amoxicillin", "split": "test"}
+{"id": "q048", "query": "question about mammogram result letter", "split": "train"}
+{"id": "q049", "query": "medicare part d coverage query", "split": "train"}
+{"id": "q050", "query": "metformin dosage increase", "split": "train"}
+{"id": "q051", "query": "hand foot mouth disease", "split": "test"}
+{"id": "q052", "query": "itemized bill request", "split": "train"}
+{"id": "q053", "query": "diabetic shoe prescription", "split": "train"}
+{"id": "q054", "query": "shingles outbreak", "split": "train"}
+{"id": "q055", "query": "pap smear result", "split": "test"}
+{"id": "q056", "query": "same day sick visit request", "split": "test"}
+{"id": "q057", "query": "adderall refill prior auth", "split": "train"}
+{"id": "q058", "query": "accommodations letter for university", "split": "train"}
+{"id": "q059", "query": "sports clearance form", "split": "test"}
+{"id": "q060", "query": "patient asking if they should go to urgent care for deep cut", "split": "train"}
+{"id": "q061", "query": "dad calling about son missing asthma inhaler at school", "split": "train"}
+{"id": "q062", "query": "patient asking why blood draw cost so much out of pocket", "split": "val"}
+{"id": "q063", "query": "patient who feels very weak after starting new blood pressure pill", "split": "train"}
+{"id": "q064", "query": "caregiver asking for patient portal access setup", "split": "train"}
+{"id": "q065", "query": "expectant mother asking if sudden swelling in feet is normal", "split": "test"}
+{"id": "q066", "query": "grandson calling on behalf of grandfather who lost hearing aid", "split": "train"}
+{"id": "q067", "query": "patient left voicemail saying they missed two doses of blood thinner", "split": "train"}
+{"id": "q068", "query": "teenager asking privately about birth control options", "split": "train"}
+{"id": "q069", "query": "patient wanting to know if fasting is required for tomorrow's lipid panel", "split": "train"}
+{"id": "q070", "query": "voicemails about blood sugar higher than 300", "split": "train"}
+{"id": "q071", "query": "portal messages requesting medical records excluding worker's comp", "split": "train"}
+{"id": "q072", "query": "messages requesting travel vaccines without appointment scheduled", "split": "val"}
+{"id": "q073", "query": "refill requests for controlled substances needing provider review", "split": "train"}
+{"id": "q074", "query": "messages containing liver enzyme results but no clinical note attached", "split": "train"}
+{"id": "q075", "query": "caregiver voicemails excluding prescription refills", "split": "train"}
+{"id": "q076", "query": "messages mentioning joint pain excluding back pain", "split": "train"}
+{"id": "q077", "query": "portal messages marked high priority with no staff response", "split": "train"}
+{"id": "q078", "query": "appointment requests specifying morning times only", "split": "train"}
+{"id": "q079", "query": "billing inquiries mentioning labcorp or quest diagnostics", "split": "val"}
+{"id": "q080", "query": "frustrated voicemail from wife whose husband's oxygen machine broke", "split": "train"}
+{"id": "q081", "query": "tearful portal message from patient dealing with severe postpartum sadness", "split": "train"}
+{"id": "q082", "query": "confused elderly patient leaving voicemail about medication schedule change", "split": "train"}
+{"id": "q083", "query": "upset message about cancelled appointment due to provider sick day", "split": "val"}
+{"id": "q084", "query": "panicked voicemail about child accidentally swallowing household cleaner", "split": "train"}
+{"id": "q085", "query": "polite request for flu clinic weekend hours", "split": "train"}
+{"id": "q086", "query": "urgent portal message reporting sudden severe numbness in arm", "split": "train"}
+{"id": "q087", "query": "hostile message regarding parking fee refund at clinic", "split": "test"}
+{"id": "q088", "query": "voicemail transcript mentioning feeling faint while standing up", "split": "train"}
+{"id": "q089", "query": "demanding portal message insisting on same-day MRI order", "split": "train"}
+{"id": "q090", "query": "weight loss medication coverage", "split": "val"}
+{"id": "q091", "query": "colonoscopy prep instructions query", "split": "val"}
+{"id": "q092", "query": "patient reporting hives after eating shellfish", "split": "train"}
+{"id": "q093", "query": "voicemail transcript with poor audio quality", "split": "test"}
+{"id": "q094", "query": "patient asking to update emergency contact info", "split": "train"}
+{"id": "q095", "query": "stitch removal appointment request", "split": "test"}
+{"id": "q096", "query": "message regarding high blood pressure reading over 180", "split": "train"}
+{"id": "q097", "query": "parent asking about fever duration after MMR vaccine", "split": "train"}
+{"id": "q098", "query": "request for handicapped parking permit application signature", "split": "test"}
+{"id": "q099", "query": "voicemail asking for directions to physical therapy suite", "split": "train"}
+{"id": "q100", "query": "head injury vomiting confusion", "split": "train", "from": "messages"}
+{"id": "q101", "query": "patient knocked unconscious after fall with persistent emesis", "split": "train", "from": "messages"}
+{"id": "q102", "query": "running late appointment cancellation", "split": "train", "from": "messages"}
+{"id": "q103", "query": "parent worried about missing routine checkup vaccines", "split": "train", "from": "messages"}
+{"id": "q104", "query": "amoxicillin diarrhea loose stool", "split": "train", "from": "messages"}
+{"id": "q105", "query": "pediatric patient loose bowel movements from antibiotic", "split": "train", "from": "messages"}
+{"id": "q106", "query": "forearm skin patch rash", "split": "val", "from": "messages"}
+{"id": "q107", "query": "asymptomatic pink skin lesion needing OTC advice", "split": "train", "from": "messages"}
+{"id": "q108", "query": "pregnancy headache vision swelling", "split": "train", "from": "messages"}
+{"id": "q109", "query": "pregnant teenager presenting with preeclampsia symptoms and right upper quadrant pain", "split": "train", "from": "messages"}
+{"id": "q110", "query": "dizziness standing up brief", "split": "test", "from": "messages"}
+{"id": "q111", "query": "transient dizziness upon standing orthostatic symptom", "split": "test", "from": "messages"}
+{"id": "q112", "query": "minor head bump anxiety", "split": "train", "from": "messages"}
+{"id": "q113", "query": "toddler bumped head on soft furniture eating and acting normally", "split": "train", "from": "messages"}
+{"id": "q114", "query": "schedule pediatric appointment", "split": "test", "from": "messages"}
+{"id": "q115", "query": "requesting routine visit appointment availability for child", "split": "train", "from": "messages"}
+{"id": "q116", "query": "coffee ground emesis blood", "split": "train", "from": "messages"}
+{"id": "q117", "query": "unresponsive pediatric patient with bloody vomit heading to emergency room", "split": "test", "from": "messages"}
+{"id": "q118", "query": "kidney labs leg swelling", "split": "test", "from": "messages"}
+{"id": "q119", "query": "portal message regarding elevated creatinine lab results and edema", "split": "train", "from": "messages"}
+{"id": "q120", "query": "suicidal ideation locked room", "split": "train", "from": "messages"}
+{"id": "q121", "query": "urgent suicide risk or crisis intervention voicemail", "split": "train", "from": "messages"}
+{"id": "q122", "query": "insurance paperwork form status", "split": "train", "from": "messages"}
+{"id": "q123", "query": "patient inquiring about completed disability or work forms", "split": "train", "from": "messages"}
+{"id": "q124", "query": "pregnancy test checkup request", "split": "test", "from": "messages"}
+{"id": "q125", "query": "patient asking about potential pregnancy symptoms and needing appointment", "split": "train", "from": "messages"}
+{"id": "q126", "query": "high fever lethargy daycare form", "split": "test", "from": "messages"}
+{"id": "q127", "query": "pediatric message with severe fever and request for school form", "split": "val", "from": "messages"}
+{"id": "q128", "query": "medication side effect stomach upset", "split": "train", "from": "messages"}
+{"id": "q129", "query": "patient experiencing stomach symptoms after starting new daily medication", "split": "train", "from": "messages"}
+{"id": "q130", "query": "double charge copay billing", "split": "train", "from": "messages"}
+{"id": "q131", "query": "patient calling regarding an incorrect charge or duplicate payment", "split": "train", "from": "messages"}
+{"id": "q132", "query": "refill request chest pain jaw", "split": "train", "from": "messages"}
+{"id": "q133", "query": "medication refill voicemail mentioning severe chest pressure and radiation to jaw", "split": "train", "from": "messages"}
+{"id": "q134", "query": "red spot rash anxiety", "split": "train", "from": "messages"}
+{"id": "q135", "query": "patient anxious about minor skin spot concerned about cancer", "split": "train", "from": "messages"}
+{"id": "q136", "query": "low hemoglobin severe anemia lab", "split": "train", "from": "messages"}
+{"id": "q137", "query": "lab follow up for critically low hemoglobin level", "split": "test", "from": "messages"}
+{"id": "q138", "query": "pediatric anxiety sadness appointment", "split": "train", "from": "messages"}
+{"id": "q139", "query": "parent seeking advice for child behavioral changes and anxiety", "split": "train", "from": "messages"}
+{"id": "q140", "query": "immunization record fax preschool", "split": "train", "from": "messages"}
+{"id": "q141", "query": "parent requesting vaccine records sent to school", "split": "train", "from": "messages"}
+{"id": "q142", "query": "fever cough stable oxygen", "split": "train", "from": "messages"}
+{"id": "q143", "query": "elderly patient with mild fever and cough staying hydrated", "split": "test", "from": "messages"}
+{"id": "q144", "query": "billing question statement unexpected fee", "split": "train", "from": "messages"}
+{"id": "q145", "query": "patient confused about extra lab charge after routine checkup", "split": "train", "from": "messages"}
+{"id": "q146", "query": "surgical wound infection fever discharge", "split": "train", "from": "messages"}
+{"id": "q147", "query": "post operative leg wound leaking yellow pus with high fever and chills", "split": "train", "from": "messages"}
+{"id": "q148", "query": "patient fall forearm injury bruising", "split": "train", "from": "messages"}
+{"id": "q149", "query": "elderly parent tripped and bruised arm with no loss of consciousness", "split": "val", "from": "messages"}
+{"id": "q150", "query": "antibiotic allergic reaction blistering swelling", "split": "test", "from": "messages"}
+{"id": "q151", "query": "severe rash skin peeling and mouth swelling after starting new antibiotic", "split": "train", "from": "messages"}
+{"id": "q152", "query": "lab result review portal question", "split": "train", "from": "messages"}
+{"id": "q153", "query": "patient asking doctor to explain recent blood test results seen on portal", "split": "val", "from": "messages"}
+{"id": "q154", "query": "nasal spray refill request pharmacy", "split": "train", "from": "messages"}
+{"id": "q155", "query": "child needs allergy medication prescription refill sent to pharmacy", "split": "train", "from": "messages"}
+{"id": "q156", "query": "lipid panel cholesterol test results", "split": "val", "from": "messages"}
+{"id": "q157", "query": "patient requesting callback regarding recent lipid panel lab results", "split": "train", "from": "messages"}
+{"id": "q158", "query": "disability mobility paperwork request", "split": "train", "from": "messages"}
+{"id": "q159", "query": "family member requesting signed disability forms for mobility assistance", "split": "train", "from": "messages"}
+{"id": "q160", "query": "zoloft refill suicide warning", "split": "train", "from": "messages"}
+{"id": "q161", "query": "patient giving away possessions suicidal ideation", "split": "train", "from": "messages"}
+{"id": "q162", "query": "wrist injury fall same day xray", "split": "train", "from": "messages"}
+{"id": "q163", "query": "slipped on ice swollen wrist needing evaluation", "split": "train", "from": "messages"}
+{"id": "q164", "query": "new medication dizziness rash side effect", "split": "train", "from": "messages"}
+{"id": "q165", "query": "patient unsteady on feet after starting new prescription", "split": "train", "from": "messages"}
+{"id": "q166", "query": "high fever unresponsive blue lips", "split": "train", "from": "messages"}
+{"id": "q167", "query": "critical emergency unresponsive patient severe fever", "split": "train", "from": "messages"}
+{"id": "q168", "query": "swollen lips trouble breathing pill reaction", "split": "train", "from": "messages"}
+{"id": "q169", "query": "acute allergic reaction anaphylaxis after new medication", "split": "train", "from": "messages"}
+{"id": "q170", "query": "physical evaluation form employer paperwork", "split": "test", "from": "messages"}
+{"id": "q171", "query": "request to send completed physical forms to employer", "split": "val", "from": "messages"}
+{"id": "q172", "query": "anxiety hyperventilation cold symptoms", "split": "train", "from": "messages"}
+{"id": "q173", "query": "panic over mild congestion and sneezes", "split": "train", "from": "messages"}
+{"id": "q174", "query": "billing question medicare copay statement", "split": "train", "from": "messages"}
+{"id": "q175", "query": "patient concerned about unexpected copay bill and insurance", "split": "train", "from": "messages"}
+{"id": "q176", "query": "routine checkup schedule next week", "split": "train", "from": "messages"}
+{"id": "q177", "query": "patient requesting appointment for routine physical next week", "split": "train", "from": "messages"}
+{"id": "q178", "query": "lightheaded standing up dizziness", "split": "train", "from": "messages"}
+{"id": "q179", "query": "family member reporting mild orthostatic lightheadedness", "split": "test", "from": "messages"}
+{"id": "q180", "query": "headache dizziness nausea", "split": "test", "from": "messages"}
+{"id": "q181", "query": "patient spouse reporting sudden left side headache and dizziness", "split": "test", "from": "messages"}
+{"id": "q182", "query": "sertraline eyebrow twitching", "split": "train", "from": "messages"}
+{"id": "q183", "query": "patient worried about serotonin syndrome from antidepressant", "split": "train", "from": "messages"}
+{"id": "q184", "query": "lisinopril tongue swelling rash", "split": "train", "from": "messages"}
+{"id": "q185", "query": "refill request with severe facial swelling and trouble swallowing", "split": "train", "from": "messages"}
+{"id": "q186", "query": "chest pressure sweating shortness of breath", "split": "train", "from": "messages"}
+{"id": "q187", "query": "urgent call about acute chest pain and difficulty breathing", "split": "train", "from": "messages"}
+{"id": "q188", "query": "chest fluttering metoprolol", "split": "train", "from": "messages"}
+{"id": "q189", "query": "palpitations after yard work asking about blood pressure medication", "split": "test", "from": "messages"}
+{"id": "q190", "query": "lab results portal question", "split": "train", "from": "messages"}
+{"id": "q191", "query": "patient asking for clarification on lab values range", "split": "test", "from": "messages"}
+{"id": "q192", "query": "antibiotic allergy lip swelling child", "split": "train", "from": "messages"}
+{"id": "q193", "query": "pediatric emergency allergic reaction struggling to breathe after medication", "split": "test", "from": "messages"}
+{"id": "q194", "query": "pediatric skin cream refill walgreens", "split": "train", "from": "messages"}
+{"id": "q195", "query": "routine prescription refill request for child topical medication", "split": "test", "from": "messages"}
+{"id": "q196", "query": "pediatric anxiety therapist referral", "split": "train", "from": "messages"}
+{"id": "q197", "query": "parent requesting appointment for child school anxiety and sleep issues", "split": "train", "from": "messages"}
+{"id": "q198", "query": "pediatric appointment request", "split": "train", "from": "messages"}
+{"id": "q199", "query": "mother asking for upcoming appointment availability for daughter", "split": "train", "from": "messages"}
